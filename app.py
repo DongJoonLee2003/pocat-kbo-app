@@ -38,9 +38,6 @@ with open("hitters.json","r", encoding="utf-8") as f:
         if i["team"] not in team_names:
             team_names.append(i["team"])
     selected_team = st.radio("팀을 선택하세요", team_names)
-    chart_data = {}
     for player in hitters:
         if player["team"] == selected_team:
             st.write(f"{player['name']} / {player['team']} / {player['avg']}")
-            chart_data[player["name"]] = player["avg"]
-    st.bar_chart(chart_data)
