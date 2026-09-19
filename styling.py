@@ -1,7 +1,7 @@
 import html
 
 TEAM_COLORS = {
-    "KT": "#EB1C24",
+    "KT": "#1A1A1A",
     "삼성": "#074CA1",
     "LG": "#C30452",
     "KIA": "#EA0029",
@@ -13,6 +13,26 @@ TEAM_COLORS = {
     "키움": "#820024",
 }
 DEFAULT_ACCENT = "#1d6f52"
+
+TEAM_CODES = {
+    "KT": "KT",
+    "삼성": "SS",
+    "LG": "LG",
+    "KIA": "HT",
+    "두산": "OB",
+    "NC": "NC",
+    "롯데": "LT",
+    "SSG": "SK",
+    "한화": "HH",
+    "키움": "WO",
+}
+
+
+def team_logo_url(team):
+    code = TEAM_CODES.get(team)
+    if not code:
+        return None
+    return f"https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/2026/emblem_{code}.png"
 
 PAGE_CSS = """
 <style>
@@ -56,11 +76,14 @@ PAGE_CSS = """
 .kbo-detail .decision{margin-top:8px; padding-top:8px; border-top:1px solid #1f3c2c; color:#8fae9c;}
 
 .kbo-team-band{
-    padding:11px 18px; border-radius:10px 10px 0 0;
-    font-family:'Oswald',sans-serif; font-size:16px; letter-spacing:.02em; color:#fff;
-    display:flex; justify-content:space-between; align-items:baseline;
+    padding:16px 20px; border-radius:12px 12px 0 0; min-height:52px;
+    font-family:'Oswald',sans-serif; font-size:19px; letter-spacing:.02em; color:#fff;
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
+    box-shadow:inset 0 -2px 0 rgba(0,0,0,.15);
 }
-.kbo-team-band .n{font-size:11px; font-family:'Noto Sans KR',sans-serif; font-weight:600; opacity:.85;}
+.kbo-team-band .name{display:flex; align-items:center; gap:10px;}
+.kbo-team-band .logo{width:30px; height:30px; object-fit:contain; filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));}
+.kbo-team-band .n{font-size:12px; font-family:'Noto Sans KR',sans-serif; font-weight:600; opacity:.85;}
 .kbo-table-wrap{border:1px solid #e4e7eb; border-top:none; border-radius:0 0 10px 10px; overflow:hidden; margin-bottom:26px;}
 table.kbo-table{width:100%; border-collapse:collapse; font-size:12.5px; background:#fff;}
 table.kbo-table th{
@@ -273,6 +296,8 @@ def render_game_card(g, pitchers):
 def render_hitter_table(team, players):
     e = html.escape
     color = team_color(team)
+    logo = team_logo_url(team)
+    logo_img = f'<img class="logo" src="{logo}" alt="">' if logo else ""
     rows = "".join(
         f"<tr><td>{e(p['name'])}</td>"
         f"<td style='color:{color};font-weight:600;'>{p['avg']:.3f}</td>"
@@ -282,7 +307,7 @@ def render_hitter_table(team, players):
     )
     return _compact(f"""
     <div class="kbo-team-band" style="background:{color};">
-        <span>{e(team)} 타자</span><span class="n">{len(players)}명</span>
+        <span class="name">{logo_img}{e(team)} 타자</span><span class="n">{len(players)}명</span>
     </div>
     <div class="kbo-table-wrap">
         <table class="kbo-table">
@@ -296,6 +321,8 @@ def render_hitter_table(team, players):
 def render_pitcher_table(team, pitchers):
     e = html.escape
     color = team_color(team)
+    logo = team_logo_url(team)
+    logo_img = f'<img class="logo" src="{logo}" alt="">' if logo else ""
     rows = "".join(
         f"<tr><td>{e(p['name'])}</td>"
         f"<td style='color:{color};font-weight:600;'>{p['era']:.2f}</td>"
@@ -305,7 +332,7 @@ def render_pitcher_table(team, pitchers):
     )
     return _compact(f"""
     <div class="kbo-team-band" style="background:{color};">
-        <span>{e(team)} 투수</span><span class="n">{len(pitchers)}명</span>
+        <span class="name">{logo_img}{e(team)} 투수</span><span class="n">{len(pitchers)}명</span>
     </div>
     <div class="kbo-table-wrap">
         <table class="kbo-table">
