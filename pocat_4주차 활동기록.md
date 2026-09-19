@@ -16,11 +16,17 @@
 - 기존 `app.py`는 `hitters.json` 스키마(name/team/avg/g/hr/rbi)를 그대로 유지했기 때문에 코드 수정 없이 그대로 작동 확인.
 - GitHub에 커밋/푸시 완료 → Streamlit Community Cloud 자동 재배포됨.
 
-## 2. 아직 남은 것 (다음 세션)
+## 2. 새로고침 버튼 Node→Python 전환 (완료)
 
-- 새로고침 버튼이 배포 환경(Streamlit Cloud, Node.js 없음)에서 작동 안 하는 문제 — `fetch_games.mjs`를 파이썬으로 재작성해야 함. 이번엔 손 못 댐.
+- 배포 사이트에서 새로고침 버튼을 눌렀더니 실제로 `FileNotFoundError`(node 명령어 없음)가 발생하는 걸 사용자가 직접 확인 → 예정보다 앞당겨서 바로 수정.
+- `kbo-game`(Node) 패키지 소스를 보니 실제로는 `koreabaseball.com/ws/Main.asmx/GetKboGameList`에 단순 JSON POST 요청 하나 보내는 것뿐이었음 → 파이썬 `requests`로 동일하게 재구현(`fetch_games.py`).
+- `app.py`에서 `subprocess.run(["node", ...])` 대신 `from fetch_games import fetch_games` 후 직접 함수 호출로 변경 — subprocess 자체가 필요 없어짐(더 단순해짐).
+- `fetch_games.mjs`(Node) 삭제, Node.js 의존성 완전히 제거. 로컬 테스트 통과 후 배포 완료.
+
+## 3. 아직 남은 것 (다음 세션)
+
 - 시각화 재시도 여부 — 3주차 막대그래프는 롤백된 상태 그대로.
-- 정렬 로직(`sorted()`) 등 순수 파이썬 학습 과제는 이번 세션엔 다루지 못함 — 시간 부족으로 다음으로 이월.
+- 정렬 로직(`sorted()`) 등 순수 파이썬 학습 과제는 이번 세션에도 다루지 못함 — 시간 부족으로 계속 다음으로 이월 중. 다음 세션엔 우선적으로 다뤄야 함.
 
 ## 3. 참고
 
