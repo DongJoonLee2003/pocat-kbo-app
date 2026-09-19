@@ -53,12 +53,121 @@ table.kbo-table td{
 }
 table.kbo-table td:first-child{font-family:'Noto Sans KR',sans-serif; font-weight:600; color:#15181c;}
 table.kbo-table tr:last-child td{border-bottom:none;}
+
+/* ── 홈 히어로: 야간 경기장 ───────────────────────── */
+.kbo-hero{
+    position:relative; width:100%; aspect-ratio:1000/320; max-height:340px;
+    border-radius:16px; overflow:hidden; margin-bottom:8px;
+    box-shadow:0 10px 30px rgba(5,20,12,.35);
+}
+.kbo-hero svg{position:absolute; inset:0; width:100%; height:100%; display:block;}
+.kbo-hero .hero-overlay{
+    position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between;
+    padding:22px 26px; font-family:'Noto Sans KR',sans-serif; color:#fff;
+    pointer-events:none;
+}
+.kbo-hero .hero-top{display:flex; justify-content:space-between; align-items:flex-start;}
+.kbo-hero .hero-date{font-size:12px; color:#bfe6d1; letter-spacing:.03em;}
+.kbo-hero .hero-live{
+    display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
+    background:rgba(255,255,255,.12); backdrop-filter:blur(2px);
+    padding:5px 10px; border-radius:999px; color:#ffe1d6;
+}
+.kbo-hero .hero-live .dot{width:8px; height:8px; border-radius:50%; background:#ff5a4e;}
+.kbo-hero .hero-title{font-family:'Oswald',sans-serif; font-weight:700; font-size:clamp(28px,5vw,46px); letter-spacing:.01em; text-shadow:0 2px 18px rgba(0,0,0,.45);}
+.kbo-hero .hero-tag{font-size:13px; color:#cfe9da; margin-top:4px;}
+
+@media (prefers-reduced-motion: no-preference){
+    .kbo-hero .light-glow{animation:kboGlow 2.6s ease-in-out infinite;}
+    .kbo-hero .flyball{animation:kboFly 6s ease-in-out infinite;}
+    .kbo-hero .hero-live .dot{animation:kboPulse 1.4s ease-in-out infinite;}
+}
+@keyframes kboGlow{0%,100%{opacity:.55;} 50%{opacity:1;}}
+@keyframes kboPulse{0%,100%{opacity:1; transform:scale(1);} 50%{opacity:.4; transform:scale(1.3);}}
+@keyframes kboFly{
+    0%{transform:translate(0px,0px) rotate(0deg);}
+    45%{transform:translate(-330px,-165px) rotate(240deg);}
+    55%{transform:translate(-330px,-165px) rotate(240deg);}
+    100%{transform:translate(0px,0px) rotate(480deg);}
+}
 </style>
 """
 
 
 def team_color(team):
     return TEAM_COLORS.get(team, DEFAULT_ACCENT)
+
+
+def render_stadium_hero(today_label, total_games, live_games):
+    e = html.escape
+
+    if live_games > 0:
+        live_badge = f'<div class="hero-live"><span class="dot"></span>{live_games}경기 진행 중</div>'
+    else:
+        live_badge = f'<div class="hero-live" style="background:rgba(255,255,255,.08);color:#dff2e6;"><span style="width:8px;"></span>오늘 {total_games}경기</div>'
+
+    return f"""
+    <div class="kbo-hero">
+        <svg viewBox="0 0 1000 320" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#04140c"/>
+                    <stop offset="55%" stop-color="#0a3320"/>
+                    <stop offset="100%" stop-color="#164a2a"/>
+                </linearGradient>
+                <radialGradient id="lightGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#fff6d8" stop-opacity="0.85"/>
+                    <stop offset="100%" stop-color="#fff6d8" stop-opacity="0"/>
+                </radialGradient>
+            </defs>
+
+            <rect x="0" y="0" width="1000" height="320" fill="url(#skyGrad)"/>
+
+            <circle class="light-glow" cx="70" cy="55" r="90" fill="url(#lightGlow)"/>
+            <circle class="light-glow" cx="930" cy="55" r="90" fill="url(#lightGlow)"/>
+
+            <g stroke="#dff2e6" stroke-width="2" opacity="0.5">
+                <line x1="500" y1="278" x2="50" y2="28"/>
+                <line x1="500" y1="278" x2="950" y2="28"/>
+            </g>
+
+            <g opacity="0.9">
+                <rect x="66" y="18" width="8" height="42" fill="#0c2415"/>
+                <rect x="926" y="18" width="8" height="42" fill="#0c2415"/>
+                <g fill="#fff6d8">
+                    <circle cx="55" cy="18" r="4"/><circle cx="70" cy="12" r="4"/><circle cx="85" cy="18" r="4"/>
+                    <circle cx="915" cy="18" r="4"/><circle cx="930" cy="12" r="4"/><circle cx="945" cy="18" r="4"/>
+                </g>
+            </g>
+
+            <polygon points="500,305 270,197 500,62 730,197" fill="#b5793f" opacity="0.9"/>
+
+            <polygon points="500,275 330,195 500,95 670,195" fill="none" stroke="#f4f0e4" stroke-width="2" opacity="0.75"/>
+            <circle cx="500" cy="225" r="13" fill="#b5793f"/>
+            <rect x="494" y="221" width="12" height="6" fill="#f4f0e4"/>
+            <rect x="493" y="271" width="14" height="10" fill="#f4f0e4" transform="rotate(45 500 275)"/>
+            <rect x="323" y="188" width="14" height="14" fill="#f4f0e4" transform="rotate(45 330 195)"/>
+            <rect x="493" y="88" width="14" height="14" fill="#f4f0e4" transform="rotate(45 500 95)"/>
+            <rect x="663" y="188" width="14" height="14" fill="#f4f0e4" transform="rotate(45 670 195)"/>
+
+            <g class="flyball" style="transform-origin:500px 260px;">
+                <circle cx="500" cy="260" r="7" fill="#fdfaf1"/>
+                <path d="M495,256 Q500,260 495,264" stroke="#c1443a" stroke-width="1" fill="none"/>
+                <path d="M505,256 Q500,260 505,264" stroke="#c1443a" stroke-width="1" fill="none"/>
+            </g>
+        </svg>
+        <div class="hero-overlay">
+            <div class="hero-top">
+                <div class="hero-date">{e(today_label)}</div>
+                {live_badge}
+            </div>
+            <div>
+                <div class="hero-title">PoCaT KBO</div>
+                <div class="hero-tag">오늘 경기와 팀별 선수 기록을 한눈에</div>
+            </div>
+        </div>
+    </div>
+    """
 
 
 def render_game_card(g):
