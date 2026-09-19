@@ -2,7 +2,7 @@
   {
     "stadium": "잠실",
     "home": "LG",
-    "away": "삼성",
+    "away": "한화",
     "startTime": "17:00",
     "status": "SCHEDULED",
     "score": {
@@ -13,7 +13,7 @@
   {
     "stadium": "사직",
     "home": "롯데",
-    "away": "한화",
+    "away": "삼성",
     "startTime": "17:00",
     "status": "SCHEDULED",
     "score": {
@@ -22,8 +22,8 @@
     }
   },
   {
-    "stadium": "문학",
-    "home": "SSG",
+    "stadium": "수원",
+    "home": "KT",
     "away": "두산",
     "startTime": "17:00",
     "status": "SCHEDULED",
@@ -33,20 +33,9 @@
     }
   },
   {
-    "stadium": "광주",
-    "home": "KIA",
-    "away": "KT",
-    "startTime": "17:00",
-    "status": "SCHEDULED",
-    "score": {
-      "home": 0,
-      "away": 0
-    }
-  },
-  {
-    "stadium": "고척",
-    "home": "키움",
-    "away": "NC",
+    "stadium": "창원",
+    "home": "NC",
+    "away": "KIA",
     "startTime": "17:00",
     "status": "SCHEDULED",
     "score": {

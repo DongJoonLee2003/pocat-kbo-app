@@ -1,6 +1,6 @@
 import streamlit as st
 import json
-import subprocess
+from fetch_games import fetch_games
 with open("players.json","w") as f:
     players = [
         {"name":"박찬호","team":"LA다저스","avg":0.289},
@@ -16,7 +16,7 @@ with open("players.json","r") as f:
 st.title("오늘의 KBO 경기")
 
 if st.button("🔄 새로고침 (최신 경기 정보 가져오기)"):
-    subprocess.run(["node", "fetch_games.mjs"], check=True)
+    fetch_games()
     st.rerun()
 
 with open("games.json","r", encoding="utf-8") as f:
