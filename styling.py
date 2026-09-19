@@ -98,6 +98,12 @@ def team_color(team):
     return TEAM_COLORS.get(team, DEFAULT_ACCENT)
 
 
+def _compact(s):
+    # Markdown treats any indented line, or a line after a blank line, as a
+    # code block. Flatten to one line so Streamlit always renders it as HTML.
+    return " ".join(line.strip() for line in s.splitlines() if line.strip())
+
+
 def render_stadium_hero(today_label, total_games, live_games):
     e = html.escape
 
@@ -106,7 +112,7 @@ def render_stadium_hero(today_label, total_games, live_games):
     else:
         live_badge = f'<div class="hero-live" style="background:rgba(255,255,255,.08);color:#dff2e6;"><span style="width:8px;"></span>오늘 {total_games}경기</div>'
 
-    return f"""
+    return _compact(f"""
     <div class="kbo-hero">
         <svg viewBox="0 0 1000 320" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -167,7 +173,7 @@ def render_stadium_hero(today_label, total_games, live_games):
             </div>
         </div>
     </div>
-    """.strip()
+    """)
 
 
 def render_game_card(g):
@@ -181,7 +187,7 @@ def render_game_card(g):
     else:
         right = '<div class="status cancel">경기 취소</div>'
 
-    return f"""
+    return _compact(f"""
     <div class="kbo-game-card">
         <div>
             <div class="vs">{e(g["home"])} vs {e(g["away"])}</div>
@@ -189,7 +195,7 @@ def render_game_card(g):
         </div>
         <div class="right">{right}</div>
     </div>
-    """.strip()
+    """)
 
 
 def render_hitter_table(team, players):
@@ -202,7 +208,7 @@ def render_hitter_table(team, players):
         f"<td>{p['triple']}</td><td>{p['hr']}</td><td>{p['rbi']}</td></tr>"
         for p in players
     )
-    return f"""
+    return _compact(f"""
     <div class="kbo-team-band" style="background:{color};">
         <span>{e(team)} 타자</span><span class="n">{len(players)}명</span>
     </div>
@@ -212,7 +218,7 @@ def render_hitter_table(team, players):
             <tbody>{rows}</tbody>
         </table>
     </div>
-    """.strip()
+    """)
 
 
 def render_pitcher_table(team, pitchers):
@@ -225,7 +231,7 @@ def render_pitcher_table(team, pitchers):
         f"<td>{p['sv']}</td><td>{p['hld']}</td><td>{p['so']}</td><td>{p['whip']:.2f}</td></tr>"
         for p in pitchers
     )
-    return f"""
+    return _compact(f"""
     <div class="kbo-team-band" style="background:{color};">
         <span>{e(team)} 투수</span><span class="n">{len(pitchers)}명</span>
     </div>
@@ -235,4 +241,4 @@ def render_pitcher_table(team, pitchers):
             <tbody>{rows}</tbody>
         </table>
     </div>
-    """.strip()
+    """)
