@@ -40,6 +40,7 @@ PAGE_CSS = """
 .kbo-game-wrap .kbo-game-card{margin-bottom:0; transition:border-color .15s ease, background .15s ease;}
 .kbo-game-wrap:hover .kbo-game-card, .kbo-game-wrap[open] .kbo-game-card{border-color:#3a6b4c; background:#123123;}
 .kbo-game-wrap .hint{font-size:10px; color:#5c7a68; text-align:right; margin-top:2px;}
+.kbo-game-wrap[open] .hint{display:none;}
 .kbo-detail{
     display:none; background:#0a1710; border:1px solid #1f3c2c; border-top:none;
     border-radius:0 0 12px 12px; padding:12px 18px; margin-top:-10px;
