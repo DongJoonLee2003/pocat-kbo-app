@@ -34,6 +34,26 @@ PAGE_CSS = """
 .kbo-game-card .status.done{color:#8fae9c;}
 .kbo-game-card .status.cancel{color:#e07b6a;}
 
+.kbo-game-wrap{margin-bottom:10px;}
+.kbo-game-wrap summary{list-style:none; cursor:pointer;}
+.kbo-game-wrap summary::-webkit-details-marker{display:none;}
+.kbo-game-wrap .kbo-game-card{margin-bottom:0; transition:border-color .15s ease, background .15s ease;}
+.kbo-game-wrap:hover .kbo-game-card, .kbo-game-wrap[open] .kbo-game-card{border-color:#3a6b4c; background:#123123;}
+.kbo-game-wrap .hint{font-size:10px; color:#5c7a68; text-align:right; margin-top:2px;}
+.kbo-detail{
+    display:none; background:#0a1710; border:1px solid #1f3c2c; border-top:none;
+    border-radius:0 0 12px 12px; padding:12px 18px; margin-top:-10px;
+    font-family:'Noto Sans KR',sans-serif; color:#cfe9da; font-size:12px;
+}
+.kbo-game-wrap:hover .kbo-detail, .kbo-game-wrap[open] .kbo-detail{display:block;}
+.kbo-detail .matchup{display:flex; justify-content:space-between; gap:18px;}
+.kbo-detail .side{flex:1;}
+.kbo-detail .side .team-line{font-weight:700; color:#eef4ee; margin-bottom:3px;}
+.kbo-detail .side .rank{color:#8fae9c; font-weight:400;}
+.kbo-detail .side .pitcher{font-family:'Oswald',sans-serif; font-size:14px; color:#5fe0a0;}
+.kbo-detail .side .pitcher-stat{font-family:'IBM Plex Mono',monospace; color:#8fae9c; font-size:11px; margin-top:2px;}
+.kbo-detail .decision{margin-top:8px; padding-top:8px; border-top:1px solid #1f3c2c; color:#8fae9c;}
+
 .kbo-team-band{
     padding:11px 18px; border-radius:10px 10px 0 0;
     font-family:'Oswald',sans-serif; font-size:16px; letter-spacing:.02em; color:#fff;
@@ -176,7 +196,35 @@ def render_stadium_hero(today_label, total_games, live_games):
     """)
 
 
-def render_game_card(g):
+def _find_pitcher(pitchers, name, team):
+    if not name:
+        return None
+    for p in pitchers:
+        if p["name"] == name and p["team"] == team:
+            return p
+    for p in pitchers:
+        if p["name"] == name:
+            return p
+    return None
+
+
+def _pitcher_block(label, team, rank, pitcher_name, pitchers):
+    e = html.escape
+    stat = _find_pitcher(pitchers, pitcher_name, team)
+    if stat:
+        stat_line = f"ERA {stat['era']:.2f} · {stat['w']}승 {stat['l']}패 · 탈삼진 {stat['so']}"
+    else:
+        stat_line = "시즌 기록 없음"
+    name_line = e(pitcher_name) if pitcher_name else "선발 미정"
+    rank_text = f"{rank}위" if rank else "-"
+    return (
+        f'<div class="side"><div class="team-line">{label} · {e(team)} <span class="rank">{rank_text}</span></div>'
+        f'<div class="pitcher">{name_line}</div>'
+        f'<div class="pitcher-stat">{stat_line}</div></div>'
+    )
+
+
+def render_game_card(g, pitchers):
     e = html.escape
     if g["status"] == "SCHEDULED":
         right = f'<div class="status">경기 예정</div><div class="time">{e(g["startTime"])}</div>'
@@ -187,14 +235,37 @@ def render_game_card(g):
     else:
         right = '<div class="status cancel">경기 취소</div>'
 
+    decision = ""
+    if g["status"] == "FINISHED" and (g.get("winPitcher") or g.get("savePitcher")):
+        parts = []
+        if g.get("winPitcher"):
+            parts.append(f"승 {e(g['winPitcher'])}")
+        if g.get("losePitcher"):
+            parts.append(f"패 {e(g['losePitcher'])}")
+        if g.get("savePitcher"):
+            parts.append(f"세이브 {e(g['savePitcher'])}")
+        decision = f'<div class="decision">{" · ".join(parts)}</div>'
+
+    home_block = _pitcher_block("홈", g["home"], g.get("homeRank"), g.get("homePitcher"), pitchers)
+    away_block = _pitcher_block("원정", g["away"], g.get("awayRank"), g.get("awayPitcher"), pitchers)
+
     return _compact(f"""
-    <div class="kbo-game-card">
-        <div>
-            <div class="vs">{e(g["home"])} vs {e(g["away"])}</div>
-            <div class="stadium">{e(g["stadium"])}</div>
+    <details class="kbo-game-wrap">
+        <summary>
+            <div class="kbo-game-card">
+                <div>
+                    <div class="vs">{e(g["home"])} vs {e(g["away"])}</div>
+                    <div class="stadium">{e(g["stadium"])}</div>
+                </div>
+                <div class="right">{right}</div>
+            </div>
+            <div class="hint">탭하면 선발투수 · 순위 정보</div>
+        </summary>
+        <div class="kbo-detail">
+            <div class="matchup">{home_block}{away_block}</div>
+            {decision}
         </div>
-        <div class="right">{right}</div>
-    </div>
+    </details>
     """)
 
 

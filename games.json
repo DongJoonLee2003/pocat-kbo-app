@@ -1,8 +1,16 @@
 [
   {
+    "date": "20260919",
     "stadium": "잠실",
     "home": "LG",
     "away": "한화",
+    "homeRank": 3,
+    "awayRank": 8,
+    "homePitcher": "임찬규",
+    "awayPitcher": "화이트",
+    "winPitcher": "",
+    "losePitcher": "",
+    "savePitcher": "",
     "startTime": "17:00",
     "status": "SCHEDULED",
     "score": {
@@ -11,9 +19,17 @@
     }
   },
   {
+    "date": "20260919",
     "stadium": "사직",
     "home": "롯데",
     "away": "삼성",
+    "homeRank": 9,
+    "awayRank": 2,
+    "homePitcher": "나균안",
+    "awayPitcher": "최원태",
+    "winPitcher": "",
+    "losePitcher": "",
+    "savePitcher": "",
     "startTime": "17:00",
     "status": "SCHEDULED",
     "score": {
@@ -22,9 +38,17 @@
     }
   },
   {
+    "date": "20260919",
     "stadium": "수원",
     "home": "KT",
     "away": "두산",
+    "homeRank": 1,
+    "awayRank": 5,
+    "homePitcher": "대니엘",
+    "awayPitcher": "최승용",
+    "winPitcher": "",
+    "losePitcher": "",
+    "savePitcher": "",
     "startTime": "17:00",
     "status": "SCHEDULED",
     "score": {
@@ -33,9 +57,17 @@
     }
   },
   {
+    "date": "20260919",
     "stadium": "창원",
     "home": "NC",
     "away": "KIA",
+    "homeRank": 6,
+    "awayRank": 4,
+    "homePitcher": "구창모",
+    "awayPitcher": "네일",
+    "winPitcher": "",
+    "losePitcher": "",
+    "savePitcher": "",
     "startTime": "17:00",
     "status": "SCHEDULED",
     "score": {

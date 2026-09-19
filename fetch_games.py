@@ -32,9 +32,17 @@ def fetch_games():
 
     simplified = [
         {
+            "date": kst_today,
             "stadium": g["S_NM"],
             "home": g["HOME_NM"],
             "away": g["AWAY_NM"],
+            "homeRank": g.get("B_RANK_NO"),
+            "awayRank": g.get("T_RANK_NO"),
+            "homePitcher": (g.get("B_PIT_P_NM") or "").strip(),
+            "awayPitcher": (g.get("T_PIT_P_NM") or "").strip(),
+            "winPitcher": (g.get("W_PIT_P_NM") or "").strip(),
+            "losePitcher": (g.get("L_PIT_P_NM") or "").strip(),
+            "savePitcher": (g.get("SV_PIT_P_NM") or "").strip(),
             "startTime": g["G_TM"],
             "status": STATUS_MAP.get(g["GAME_STATE_SC"], "SCHEDULED"),
             "score": {"home": int(g["B_SCORE_CN"]), "away": int(g["T_SCORE_CN"])},
