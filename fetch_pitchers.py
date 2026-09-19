@@ -3,7 +3,7 @@ import requests
 import json
 from bs4 import BeautifulSoup
 
-URL = "https://www.koreabaseball.com/record/player/hitterbasic/basic1.aspx"
+URL = "https://www.koreabaseball.com/record/player/pitcherbasic/basic1.aspx"
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 TEAM_FIELD = "ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlTeam$ddlTeam"
 
@@ -29,20 +29,19 @@ def capture_form_state(soup):
     return form_data
 
 
-def parse_players(soup):
+def parse_pitchers(soup):
     tables = soup.find_all("table")
     if not tables:
         return []
     rows = tables[0].find_all("tr")
     header = [th.get_text(strip=True) for th in rows[0].find_all(["th", "td"])]
-    players = []
+    pitchers = []
     for row in rows[1:]:
-        cells = row.find_all("td")
-        texts = [td.get_text(strip=True) for td in cells]
+        texts = [td.get_text(strip=True) for td in row.find_all("td")]
         if len(texts) != len(header):
             continue
         record = dict(zip(header, texts))
-        if not record.get("AVG") or record["AVG"] == "-":
+        if not record.get("ERA") or record["ERA"] == "-":
             continue
 
         link = row.find("a")
@@ -52,27 +51,24 @@ def parse_players(soup):
             if m:
                 player_id = m.group(1)
 
-        players.append(
+        pitchers.append(
             {
                 "id": player_id,
                 "name": record["선수명"],
                 "team": record["팀명"],
-                "avg": float(record["AVG"]),
+                "era": float(record["ERA"]),
                 "g": int(record["G"]),
-                "pa": int(record["PA"]),
-                "ab": int(record["AB"]),
-                "r": int(record["R"]),
-                "h": int(record["H"]),
-                "double": int(record["2B"]),
-                "triple": int(record["3B"]),
-                "hr": int(record["HR"]),
-                "tb": int(record["TB"]),
-                "rbi": int(record["RBI"]),
-                "sac": int(record["SAC"]),
-                "sf": int(record["SF"]),
+                "w": int(record["W"]),
+                "l": int(record["L"]),
+                "sv": int(record["SV"]),
+                "hld": int(record["HLD"]),
+                "wpct": record["WPCT"],
+                "ip": record["IP"],
+                "so": int(record["SO"]),
+                "whip": float(record["WHIP"]),
             }
         )
-    return players
+    return pitchers
 
 
 def next_page_target(soup, current_page):
@@ -84,14 +80,14 @@ def next_page_target(soup, current_page):
     return m.group(1) if m else None
 
 
-def fetch_hitters():
+def fetch_pitchers():
     session = requests.Session()
     resp = session.get(URL, headers=HEADERS)
     resp.encoding = "utf-8"
     soup = BeautifulSoup(resp.text, "html.parser")
     base_form = capture_form_state(soup)
 
-    all_players = []
+    all_pitchers = []
 
     for code in TEAM_CODES:
         form_data = dict(base_form)
@@ -102,7 +98,7 @@ def fetch_hitters():
         resp2.encoding = "utf-8"
         soup2 = BeautifulSoup(resp2.text, "html.parser")
 
-        team_players = parse_players(soup2)
+        team_pitchers = parse_pitchers(soup2)
         page = 1
 
         while True:
@@ -115,23 +111,23 @@ def fetch_hitters():
             resp3 = session.post(URL, headers=HEADERS, data=page_form)
             resp3.encoding = "utf-8"
             soup2 = BeautifulSoup(resp3.text, "html.parser")
-            team_players.extend(parse_players(soup2))
+            team_pitchers.extend(parse_pitchers(soup2))
             page += 1
 
         seen = set()
-        for p in team_players:
+        for p in team_pitchers:
             key = (p["name"], p["team"])
             if key in seen:
                 continue
             seen.add(key)
-            all_players.append(p)
+            all_pitchers.append(p)
 
-    with open("hitters.json", "w", encoding="utf-8") as f:
-        json.dump(all_players, f, ensure_ascii=False, indent=2)
+    with open("pitchers.json", "w", encoding="utf-8") as f:
+        json.dump(all_pitchers, f, ensure_ascii=False, indent=2)
 
-    return all_players
+    return all_pitchers
 
 
 if __name__ == "__main__":
-    result = fetch_hitters()
-    print(f"saved hitters.json: {len(result)} players")
+    result = fetch_pitchers()
+    print(f"saved pitchers.json: {len(result)} players")
