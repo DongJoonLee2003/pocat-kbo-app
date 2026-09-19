@@ -167,7 +167,7 @@ def render_stadium_hero(today_label, total_games, live_games):
             </div>
         </div>
     </div>
-    """
+    """.strip()
 
 
 def render_game_card(g):
@@ -189,7 +189,7 @@ def render_game_card(g):
         </div>
         <div class="right">{right}</div>
     </div>
-    """
+    """.strip()
 
 
 def render_hitter_table(team, players):
@@ -212,7 +212,7 @@ def render_hitter_table(team, players):
             <tbody>{rows}</tbody>
         </table>
     </div>
-    """
+    """.strip()
 
 
 def render_pitcher_table(team, pitchers):
@@ -235,4 +235,4 @@ def render_pitcher_table(team, pitchers):
             <tbody>{rows}</tbody>
         </table>
     </div>
-    """
+    """.strip()
