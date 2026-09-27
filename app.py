@@ -9,6 +9,7 @@ pages = [
     st.Page("views/today_games.py", title="오늘 KBO 경기", icon="⚾"),
     st.Page("views/team_stats.py", title="팀별 선수 기록", icon="📊"),
     st.Page("views/player_info.py", title="선수 정보", icon="🧑"),
+    st.Page("views/portfolio.py", title="포트폴리오", icon="📝", url_path="portfolio"),
 ]
 
 pg = st.navigation(pages, position="top")

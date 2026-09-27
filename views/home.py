@@ -27,10 +27,12 @@ col3.metric("등록 구단 수", "10개")
 
 st.divider()
 
-c1, c2, c3 = st.columns(3)
+c1, c2, c3, c4 = st.columns(4)
 with c1:
     st.page_link("views/today_games.py", label="⚾ 오늘 KBO 경기", use_container_width=True)
 with c2:
     st.page_link("views/team_stats.py", label="📊 팀별 선수 기록", use_container_width=True)
 with c3:
     st.page_link("views/player_info.py", label="🧑 선수 정보", use_container_width=True)
+with c4:
+    st.page_link("views/portfolio.py", label="📝 포트폴리오", use_container_width=True)
